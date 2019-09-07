@@ -73,6 +73,29 @@ jobs:
     - script: sh -x ./clean_build.sh
       displayName: Clean Build
 
+- job: LinuxARMBuild
+  displayName: Linux ARM Build
+  pool:
+    name: 'arm'
+  strategy:
+    matrix:
+      Release:
+        CI_ENV_BUILD_TYPE: Release
+  steps:
+    - script: sh -x ./clean_build.sh -j 4
+      displayName: Clean Build
+    - task: ArchiveFiles@2
+      displayName: Archive Completed Build Directory
+      inputs:
+        rootFolderOrFile: build/bin/
+        includeRootFolder: true
+        archiveFile: $(Build.ArtifactStagingDirectory)/$(CI_ENV_BUILD_TYPE).zip
+    - task: PublishBuildArtifacts@1
+      displayName: Publish Completed Build Directory Archive Build Artifacts
+      inputs:
+        pathtoPublish: $(Build.ArtifactStagingDirectory)/$(CI_ENV_BUILD_TYPE).zip
+        artifactName: Linux ARM $(CI_ENV_BUILD_TYPE)
+
 - job: MacBuild
   displayName: Mac Build
   pool:
