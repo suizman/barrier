@@ -24,5 +24,11 @@ mkdir build || exit 1
 cd build || exit 1
 echo Starting Barrier $B_BUILD_TYPE build...
 $B_CMAKE $B_CMAKE_FLAGS .. || exit 1
-make || exit 1
+if [ $(uname -m | grep -i arm) ]; then 
+	echo "Building for ARM"
+	make -j2 || exit 1
+else
+	echo "Building for x86_64"
+	make -j4 || exit 1
+fi
 echo "Build completed successfully"
